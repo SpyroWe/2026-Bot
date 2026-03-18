@@ -13,12 +13,14 @@ private BooleanSupplier intakeTrigger ;
 private BooleanSupplier outtakeTrigger;
 private Hopper_Sub hopperSub;
 private BooleanSupplier button;
+private BooleanSupplier button_two;
 
-public HopperCOM(Hopper_Sub hopS , BooleanSupplier iT, BooleanSupplier oT,BooleanSupplier but) {
+public HopperCOM(Hopper_Sub hopS , BooleanSupplier iT, BooleanSupplier oT,BooleanSupplier but,BooleanSupplier buton ) {
     intakeTrigger = iT;
     outtakeTrigger = oT;
     button = but;
     hopperSub = hopS;
+    button_two = buton;
 
     addRequirements(hopperSub);
 }
@@ -29,7 +31,7 @@ public HopperCOM(Hopper_Sub hopS , BooleanSupplier iT, BooleanSupplier oT,Boolea
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  hopperSub.moveHopper(intakeTrigger.getAsBoolean(),outtakeTrigger.getAsBoolean(),button.getAsBoolean());
+  hopperSub.moveHopper(intakeTrigger.getAsBoolean(),outtakeTrigger.getAsBoolean(),button.getAsBoolean(),button_two.getAsBoolean());
   }
 
   // Called once the command ends or is interrupted.

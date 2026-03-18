@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -64,8 +65,12 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
     public RobotContainer() {
 
-        NamedCommands.registerCommand("feed shooter",effectorbase.shoot_auto());
+       /*  NamedCommands.registerCommand("feed shooter",effectorbase.shoot_auto());
         NamedCommands.registerCommand("Stop feeder",effectorbase.stop_Auto());
+        NamedCommands.registerCommand("stop shoot1", effectorbase.Flystop1());
+        NamedCommands.registerCommand("shoot1", effectorbase.Flywheel1());
+        NamedCommands.registerCommand("shoot2", effectorbase.Flywheel2());
+        NamedCommands.registerCommand("stop shoot2",effectorbase.Flystop2());*/
         
     
            autoChooser = AutoBuilder.buildAutoChooser("Move Forward");
@@ -82,28 +87,32 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
+
+            // adjust this to change the joystcks used, and rotation direction
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate/3) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getRightY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getRightX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(joystick.getLeftX() * MaxAngularRate/3) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // getRightX
 
 
 
 
          //effector
         effectorbase.setDefaultCommand(new IntakeCOM(effectorbase,
-        () ->m_driverController.leftTrigger().getAsBoolean(),
-        () ->m_driverController.rightTrigger().getAsBoolean()
+        () ->CO_Controller.leftTrigger().getAsBoolean(),
+        () ->CO_Controller.rightTrigger().getAsBoolean()
         ));
 
         //hopper
         hopperbase.setDefaultCommand(new HopperCOM(hopperbase,
-        () ->CO_Controller.y().getAsBoolean(),
-        () ->CO_Controller.b().getAsBoolean(),
-        () ->CO_Controller.x().getAsBoolean(),
-        ()->CO_Controller.a().getAsBoolean()
+        () ->m_driverController.y().getAsBoolean(),
+        () ->m_driverController.b().getAsBoolean(),
+        () ->m_driverController.rightTrigger().getAsBoolean(),
+        ()-> m_driverController.leftTrigger().getAsBoolean()
         ));
 
 
