@@ -34,12 +34,10 @@ rollerMotor.getConfigurator().apply(currentlimit1);
         if(true){
             if(intakeTrigger){
                 hopperMotor.set(-.7);
-            }else if(hopperMotor.getAnalogVoltage().getValueAsDouble()> .1){
-                hopperMotor.set(0);
-
             }
             else if(outtakeTrigger){
                 hopperMotor.set(.7);
+                rollerMotor.set(.8);
             }
             else if(button){
                 rollerMotor.set(.8);

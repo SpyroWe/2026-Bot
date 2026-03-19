@@ -27,20 +27,23 @@ public class Intake_Sub extends SubsystemBase {
 
     public Intake_Sub() {
 CurrentLimitsConfigs shootconfig = new CurrentLimitsConfigs();
-shootconfig.StatorCurrentLimit = 60;
+shootconfig.StatorCurrentLimit = 50;
 shootconfig.StatorCurrentLimitEnable = true;
 endeffectormotor.getConfigurator().apply(shootconfig);
 endeffectormotor2.getConfigurator().apply(shootconfig);
+IntakeMotor.getConfigurator().apply(shootconfig);
+feeder.getConfigurator().apply(shootconfig);
 
 
     }
 
-    /*public Command shoot_auto(){
+    public Command shoot_auto(){
         return Commands.run(()->feeder.set(.7),this).withTimeout(1.5);
     }
      public Command stop_Auto(){
         return Commands.run(()->feeder.set(0),this);
     }//this was note here
+    
     public Command Flywheel1(){
         return Commands.run(()->endeffectormotor.set(-.6),this);
         
@@ -49,15 +52,14 @@ endeffectormotor2.getConfigurator().apply(shootconfig);
         return Commands.run(()->endeffectormotor2.set(.6),this);
         
     }
-    /*public Command ShootCharge(){
-        return Commands.parallel(Flywheel1(),Flywheel2()).withTimeout(2);
-    }*/
-    /*public Command Flystop1(){
+    
+    
+    public Command Flystop1(){
         return Commands.run(()->endeffectormotor.set(0),this);
     }
     public Command Flystop2(){
         return Commands.run(()->endeffectormotor2.set(0),this);
-    }*/
+    }
 
     
     
@@ -71,10 +73,10 @@ endeffectormotor2.getConfigurator().apply(shootconfig);
 
     }else if(rightTrigger){
         // takes the ball in and shoots it
-        feeder.set(.7);
-        IntakeMotor.set(.7);
-        endeffectormotor.set(-2);
-        endeffectormotor2.set(2);//may need to spin backward
+        feeder.set(.55);
+        IntakeMotor.set(.55);
+        endeffectormotor.set(-.6);
+        endeffectormotor2.set(.6);//may need to spin backward
     }else{
         endeffectormotor.set(-.45);
         endeffectormotor2.set(.45);//may need to spin backward

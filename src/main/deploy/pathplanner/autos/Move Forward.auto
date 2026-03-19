@@ -9,18 +9,6 @@
           "data": {
             "pathName": "Forward"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "feed shooter"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop feeder"
-          }
         }
       ]
     }

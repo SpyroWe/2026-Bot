@@ -13,15 +13,13 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.subsystems.Intake_Sub;
@@ -29,6 +27,9 @@ import frc.robot.Commands.IntakeCOM;
 
 import frc.robot.subsystems.Hopper_Sub;
 import frc.robot.Commands.HopperCOM;
+
+import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.Commands.AlignToTagCOM;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -41,7 +42,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.15).withRotationalDeadband(MaxAngularRate * 0.15) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
@@ -49,6 +50,8 @@ public class RobotContainer {
 private final Intake_Sub effectorbase = new Intake_Sub();
 
 private final Hopper_Sub hopperbase = new Hopper_Sub();
+
+private final LimelightSubsystem m_limelight = new LimelightSubsystem();
 
 
 private final CommandXboxController m_driverController = new CommandXboxController(0);
@@ -67,6 +70,7 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
        /*  NamedCommands.registerCommand("feed shooter",effectorbase.shoot_auto());
         NamedCommands.registerCommand("Stop feeder",effectorbase.stop_Auto());
+
         NamedCommands.registerCommand("stop shoot1", effectorbase.Flystop1());
         NamedCommands.registerCommand("shoot1", effectorbase.Flywheel1());
         NamedCommands.registerCommand("shoot2", effectorbase.Flywheel2());
@@ -90,9 +94,9 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
             // adjust this to change the joystcks used, and rotation direction
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getRightY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getRightX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(joystick.getLeftX() * MaxAngularRate/3) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY((-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(joystick.getRightX() * MaxAngularRate/2) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -109,8 +113,8 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
         //hopper
         hopperbase.setDefaultCommand(new HopperCOM(hopperbase,
-        () ->m_driverController.y().getAsBoolean(),
-        () ->m_driverController.b().getAsBoolean(),
+        () ->CO_Controller.y().getAsBoolean(),
+        () ->CO_Controller.b().getAsBoolean(),
         () ->m_driverController.rightTrigger().getAsBoolean(),
         ()-> m_driverController.leftTrigger().getAsBoolean()
         ));
@@ -138,6 +142,16 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
         // Reset the field-centric heading on left bumper press.
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+
+        // Align to AprilTag 26 or 9 while operator right bumper is held.
+        // Driver retains full translation control; only rotation is overridden by limelight.
+        CO_Controller.rightBumper().whileTrue(new AlignToTagCOM(
+                drivetrain,
+                m_limelight,
+                MaxAngularRate,
+                () -> MathUtil.applyDeadband(-joystick.getRightY(), 0.1) * MaxSpeed,
+                () -> MathUtil.applyDeadband(-joystick.getRightX(), 0.1) * MaxSpeed
+        ));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

@@ -212,9 +212,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 ),
                 new PPHolonomicDriveController(
                     // PID constants for translation
-                    new PIDConstants(7, 0, 0),//kp:7 ki:0 kd:0
+                    new PIDConstants(7, 0, .1),//kp:7 ki:0 kd:0
                     // PID constants for rotation
-                    new PIDConstants(1.1, .00089, .1053)//kp:1 ki:0 kd:.105   kp:1 maybe kd:.105   kp1.1              kp:1.1
+                    new PIDConstants(1.1, .002, .1053)//kp:1 ki:0 kd:.105   kp:1 maybe kd:.105   kp1.1     kI.00089 
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
