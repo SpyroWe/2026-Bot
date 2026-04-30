@@ -27,7 +27,7 @@ public class Intake_Sub extends SubsystemBase {
 
     public Intake_Sub() {
 CurrentLimitsConfigs shootconfig = new CurrentLimitsConfigs();
-shootconfig.StatorCurrentLimit = 50;
+shootconfig.StatorCurrentLimit = 40;
 shootconfig.StatorCurrentLimitEnable = true;
 endeffectormotor.getConfigurator().apply(shootconfig);
 endeffectormotor2.getConfigurator().apply(shootconfig);
@@ -45,21 +45,32 @@ feeder.getConfigurator().apply(shootconfig);
     }//this was note here
     
     public Command Flywheel1(){
-        return Commands.run(()->endeffectormotor.set(-.6),this);
-        
-    }
-    public Command Flywheel2(){
-        return Commands.run(()->endeffectormotor2.set(.6),this);
+        return Commands.run(()->{endeffectormotor.set(-.6);endeffectormotor2.set(.6);},this);
         
     }
     
     
     public Command Flystop1(){
-        return Commands.run(()->endeffectormotor.set(0),this);
+        return Commands.run(()->{endeffectormotor.set(0);endeffectormotor2.set(0);},this);
     }
-    public Command Flystop2(){
-        return Commands.run(()->endeffectormotor2.set(0),this);
-    }
+    
+    public Command shootSequence() {
+    return Commands.sequence(
+        // spin up flywheel for 1 second
+        Commands.run(() -> {
+            endeffectormotor.set(-.46);
+            endeffectormotor2.set(.46);
+        }, this).withTimeout(1.0),
+        // flywheel keeps spinning, feeder activates for 1.5 seconds
+        Commands.run(() -> {
+            endeffectormotor.set(-.46);
+            endeffectormotor2.set(.46);
+            feeder.set(0.7);
+            IntakeMotor.set(0.55);
+        }, this).withTimeout(4)
+    );
+}
+
 
     
     
@@ -67,17 +78,18 @@ feeder.getConfigurator().apply(shootconfig);
     public void moveEffector (boolean leftTrigger,boolean rightTrigger){
     if(true){
     if(leftTrigger){
-        endeffectormotor.set(-.6);// warms up the shooter: press before shooting
-        endeffectormotor2.set(.6);//may need to spin backward
-    
-
-    }else if(rightTrigger){
-        // takes the ball in and shoots it
-        feeder.set(.55);
+        endeffectormotor.set(-.55);// warms up the shooter: press before shooting
+        endeffectormotor2.set(.55);//may need to spin backward
+    if(rightTrigger&&leftTrigger){//if right originaly
+       // takes the ball in and shoots it
+        feeder.set(1);
         IntakeMotor.set(.55);
-        endeffectormotor.set(-.6);
-        endeffectormotor2.set(.6);//may need to spin backward
-    }else{
+        endeffectormotor.set(-.55);
+        endeffectormotor2.set(.55);//may need to spin backward
+    }
+    }
+
+    else{
         endeffectormotor.set(-.45);
         endeffectormotor2.set(.45);//may need to spin backward
         IntakeMotor.stopMotor(); 

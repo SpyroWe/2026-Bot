@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -17,8 +18,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -68,13 +69,12 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
     public RobotContainer() {
 
-       /*  NamedCommands.registerCommand("feed shooter",effectorbase.shoot_auto());
-        NamedCommands.registerCommand("Stop feeder",effectorbase.stop_Auto());
+        NamedCommands.registerCommand("feed shooter",effectorbase.shoot_auto().asProxy());
+        NamedCommands.registerCommand("Stop feeder",effectorbase.stop_Auto().asProxy());
 
-        NamedCommands.registerCommand("stop shoot1", effectorbase.Flystop1());
-        NamedCommands.registerCommand("shoot1", effectorbase.Flywheel1());
-        NamedCommands.registerCommand("shoot2", effectorbase.Flywheel2());
-        NamedCommands.registerCommand("stop shoot2",effectorbase.Flystop2());*/
+        NamedCommands.registerCommand("stop shoot1", effectorbase.Flystop1().asProxy());
+        NamedCommands.registerCommand("shoot1", effectorbase.Flywheel1().asProxy());
+        NamedCommands.registerCommand("shoot sequence", effectorbase.shootSequence().asProxy());
         
     
            autoChooser = AutoBuilder.buildAutoChooser("Move Forward");
@@ -145,13 +145,14 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
         // Align to AprilTag 26 or 9 while operator right bumper is held.
         // Driver retains full translation control; only rotation is overridden by limelight.
-        CO_Controller.rightBumper().whileTrue(new AlignToTagCOM(
+        // Right bumper: auto aim (tx→0) + auto range (ty→0), driver keeps strafe (right stick X)
+        /*CO_Controller.rightBumper().whileTrue(new AlignToTagCOM(
                 drivetrain,
                 m_limelight,
+                MaxSpeed,
                 MaxAngularRate,
-                () -> MathUtil.applyDeadband(-joystick.getRightY(), 0.1) * MaxSpeed,
                 () -> MathUtil.applyDeadband(-joystick.getRightX(), 0.1) * MaxSpeed
-        ));
+        ));*/
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
