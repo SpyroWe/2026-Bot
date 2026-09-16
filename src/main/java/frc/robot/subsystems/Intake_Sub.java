@@ -18,10 +18,13 @@ public class Intake_Sub extends SubsystemBase {
     // 30 hopper intake motor
     // 31 floor intake motor
 
-    private TalonFXS endeffectormotor = new TalonFXS(40);// spin constantly with effector 2 
+     
     private TalonFXS IntakeMotor = new TalonFXS(31);// runs the intake floor id confirmed
     private TalonFXS feeder = new TalonFXS(33);// change id once added
-    private TalonFXS endeffectormotor2 = new TalonFXS(34); // Spin constantly with effector 1
+    private TalonFXS endeffectormotor = new TalonFXS(40);// spin constantly with effector 2
+    private TalonFXS endeffectormotor2 = new TalonFXS(34);
+    private TalonFXS endeffectormotor3 = new TalonFXS(35);
+    private TalonFXS endeffectormotor4 = new TalonFXS(36);
 
 
 
@@ -31,6 +34,8 @@ shootconfig.StatorCurrentLimit = 40;
 shootconfig.StatorCurrentLimitEnable = true;
 endeffectormotor.getConfigurator().apply(shootconfig);
 endeffectormotor2.getConfigurator().apply(shootconfig);
+endeffectormotor3.getConfigurator().apply(shootconfig);
+endeffectormotor4.getConfigurator().apply(shootconfig);
 IntakeMotor.getConfigurator().apply(shootconfig);
 feeder.getConfigurator().apply(shootconfig);
 
@@ -78,20 +83,28 @@ feeder.getConfigurator().apply(shootconfig);
     public void moveEffector (boolean leftTrigger,boolean rightTrigger){
     if(true){
     if(leftTrigger){
-        endeffectormotor.set(-.55);// warms up the shooter: press before shooting
-        endeffectormotor2.set(.55);//may need to spin backward
+        endeffectormotor.set(-.40);// warms up the shooter: press before shooting
+        endeffectormotor2.set(.40);
+        endeffectormotor3.set(-.40);//may need to spin backward
+        endeffectormotor4.set(.40);
     if(rightTrigger&&leftTrigger){//if right originaly
        // takes the ball in and shoots it
         feeder.set(1);
-        IntakeMotor.set(.55);
-        endeffectormotor.set(-.55);
-        endeffectormotor2.set(.55);//may need to spin backward
+        IntakeMotor.set(.40);
+        endeffectormotor.set(-.40);
+        endeffectormotor2.set(.40);
+        endeffectormotor3.set(-.40);//may need to spin backward
+        endeffectormotor4.set(.40);
+        //may need to spin backward
     }
     }
 
     else{
-        endeffectormotor.set(-.45);
-        endeffectormotor2.set(.45);//may need to spin backward
+        endeffectormotor.set(0);
+        endeffectormotor2.set(0);
+        endeffectormotor3.set(0);
+        endeffectormotor4.set(0);
+        //may need to spin backward
         IntakeMotor.stopMotor(); 
         feeder.stopMotor();
     }

@@ -94,9 +94,9 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
             // adjust this to change the joystcks used, and rotation direction
             drivetrain.applyRequest(() ->
-                drive.withVelocityX((-joystick.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY((-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(joystick.getRightX() * MaxAngularRate/2) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-CO_Controller.getLeftY()) * MaxSpeed/2.5) // Drive forward with negative Y (forward)
+                    .withVelocityY((-CO_Controller.getLeftX()) * MaxSpeed/2.5) // Drive left with negative X (left)
+                    .withRotationalRate(CO_Controller.getRightX() * MaxAngularRate/2.5) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -115,8 +115,8 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
         hopperbase.setDefaultCommand(new HopperCOM(hopperbase,
         () ->CO_Controller.y().getAsBoolean(),
         () ->CO_Controller.b().getAsBoolean(),
-        () ->m_driverController.rightTrigger().getAsBoolean(),
-        ()-> m_driverController.leftTrigger().getAsBoolean()
+        () ->CO_Controller.rightBumper().getAsBoolean(),
+        ()-> CO_Controller.leftBumper().getAsBoolean()
         ));
 
 
@@ -141,7 +141,7 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        CO_Controller.povDown().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));//was if restet button no work press . and swap to different button binding ex. a()
 
         // Align to AprilTag 26 or 9 while operator right bumper is held.
         // Driver retains full translation control; only rotation is overridden by limelight.
