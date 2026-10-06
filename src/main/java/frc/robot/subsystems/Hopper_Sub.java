@@ -33,21 +33,21 @@ rollerMotor.getConfigurator().apply(currentlimit1);
     public void moveHopper (boolean intakeTrigger,boolean outtakeTrigger, boolean button,boolean button_two){
         if(true){
             if(intakeTrigger){
-                hopperMotor.set(-.7);
+                hopperMotor.set(.25);
             }
             else if(outtakeTrigger){
-                hopperMotor.set(.7);
-                rollerMotor.set(.8);
+                hopperMotor.set(-.25);
+            
             }
             else if(button){
-                rollerMotor.set(.8);
+                rollerMotor.set(1);
             
             }
             else if(button_two){
-                rollerMotor.set(-.8);
+                rollerMotor.set(-1);
             }
             else{
-                hopperMotor.set(0);;
+                hopperMotor.set(0);
                 rollerMotor.set(0);
             }
         }

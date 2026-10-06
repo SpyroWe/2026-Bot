@@ -94,9 +94,9 @@ private final CommandXboxController CO_Controller = new CommandXboxController(1)
 
             // adjust this to change the joystcks used, and rotation direction
             drivetrain.applyRequest(() ->
-                drive.withVelocityX((-CO_Controller.getLeftY()) * MaxSpeed/2.5) // Drive forward with negative Y (forward)
-                    .withVelocityY((-CO_Controller.getLeftX()) * MaxSpeed/2.5) // Drive left with negative X (left)
-                    .withRotationalRate(CO_Controller.getRightX() * MaxAngularRate/2.5) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX((-CO_Controller.getLeftY()) * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY((-CO_Controller.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(CO_Controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 

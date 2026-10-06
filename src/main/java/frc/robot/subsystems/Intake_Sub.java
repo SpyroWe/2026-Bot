@@ -20,58 +20,76 @@ public class Intake_Sub extends SubsystemBase {
 
      
     private TalonFXS IntakeMotor = new TalonFXS(31);// runs the intake floor id confirmed
-    private TalonFXS feeder = new TalonFXS(33);// change id once added
-    private TalonFXS endeffectormotor = new TalonFXS(40);// spin constantly with effector 2
-    private TalonFXS endeffectormotor2 = new TalonFXS(34);
-    private TalonFXS endeffectormotor3 = new TalonFXS(35);
-    private TalonFXS endeffectormotor4 = new TalonFXS(36);
+    private TalonFXS feederFL = new TalonFXS(24);
+    private TalonFXS feederFR = new TalonFXS(21);// change id once added
+    private TalonFXS endeffectormotorTFR = new TalonFXS(20);// spin constantly with effector 2
+    private TalonFXS endeffectormotor2MFR = new TalonFXS(22);
+    private TalonFXS endeffectormotor3TFL = new TalonFXS(23);
+    private TalonFXS endeffectormotor4MFL = new TalonFXS(25);
 
 
 
     public Intake_Sub() {
 CurrentLimitsConfigs shootconfig = new CurrentLimitsConfigs();
+CurrentLimitsConfigs NEWlimitfloor = new CurrentLimitsConfigs();
+NEWlimitfloor.SupplyCurrentLimit = 40;
+NEWlimitfloor.SupplyCurrentLimitEnable = true;
+
 shootconfig.StatorCurrentLimit = 40;
+shootconfig.SupplyCurrentLimitEnable = true;
+shootconfig.SupplyCurrentLowerLimit = 50;
+shootconfig.SupplyCurrentLowerTime = .1;
+
+shootconfig.SupplyCurrentLimit = 40;
 shootconfig.StatorCurrentLimitEnable = true;
-endeffectormotor.getConfigurator().apply(shootconfig);
-endeffectormotor2.getConfigurator().apply(shootconfig);
-endeffectormotor3.getConfigurator().apply(shootconfig);
-endeffectormotor4.getConfigurator().apply(shootconfig);
-IntakeMotor.getConfigurator().apply(shootconfig);
-feeder.getConfigurator().apply(shootconfig);
+
+endeffectormotorTFR.getConfigurator().apply(shootconfig);
+endeffectormotor2MFR.getConfigurator().apply(shootconfig);
+endeffectormotor3TFL.getConfigurator().apply(shootconfig);
+endeffectormotor4MFL.getConfigurator().apply(shootconfig);
+IntakeMotor.getConfigurator().apply(NEWlimitfloor);//used shootconfig
+feederFL.getConfigurator().apply(shootconfig);
+feederFR.getConfigurator().apply(shootconfig);
 
 
     }
 
     public Command shoot_auto(){
-        return Commands.run(()->feeder.set(.7),this).withTimeout(1.5);
+        return Commands.run(()->{feederFL.set(.7);feederFR.set(-.7);},this).withTimeout(1.5);
     }
      public Command stop_Auto(){
-        return Commands.run(()->feeder.set(0),this);
+        return Commands.run(()->{feederFL.set(0);feederFR.set(0);},this);
     }//this was note here
     
     public Command Flywheel1(){
-        return Commands.run(()->{endeffectormotor.set(-.6);endeffectormotor2.set(.6);},this);
+        return Commands.run(()->{endeffectormotorTFR.set(-.6);endeffectormotor2MFR.set(.6);},this);
         
     }
     
     
     public Command Flystop1(){
-        return Commands.run(()->{endeffectormotor.set(0);endeffectormotor2.set(0);},this);
+        return Commands.run(()->{endeffectormotorTFR.set(0);endeffectormotor2MFR.set(0);},this);
     }
     
     public Command shootSequence() {
     return Commands.sequence(
         // spin up flywheel for 1 second
         Commands.run(() -> {
-            endeffectormotor.set(-.46);
-            endeffectormotor2.set(.46);
+            endeffectormotorTFR.set(-.46);
+            endeffectormotor2MFR.set(-.46);
+            endeffectormotor4MFL.set(.46);
+            endeffectormotor3TFL.set(.46);
+
         }, this).withTimeout(1.0),
         // flywheel keeps spinning, feeder activates for 1.5 seconds
         Commands.run(() -> {
-            endeffectormotor.set(-.46);
-            endeffectormotor2.set(.46);
-            feeder.set(0.7);
-            IntakeMotor.set(0.55);
+            endeffectormotorTFR.set(-.46);
+            endeffectormotor2MFR.set(-.46);
+            endeffectormotor4MFL.set(.46);
+            endeffectormotor3TFL.set(.46);
+            feederFL.set(-0.7);
+            feederFR.set(.7);
+            IntakeMotor.set(1);
         }, this).withTimeout(4)
     );
 }
@@ -83,30 +101,32 @@ feeder.getConfigurator().apply(shootconfig);
     public void moveEffector (boolean leftTrigger,boolean rightTrigger){
     if(true){
     if(leftTrigger){
-        endeffectormotor.set(-.40);// warms up the shooter: press before shooting
-        endeffectormotor2.set(.40);
-        endeffectormotor3.set(-.40);//may need to spin backward
-        endeffectormotor4.set(.40);
+        endeffectormotorTFR.set(-.50);// warms up the shooter: press before shooting
+        endeffectormotor2MFR.set(-.50);
+        endeffectormotor3TFL.set(.50);//may need to spin backward
+        endeffectormotor4MFL.set(.50);
     if(rightTrigger&&leftTrigger){//if right originaly
        // takes the ball in and shoots it
-        feeder.set(1);
-        IntakeMotor.set(.40);
-        endeffectormotor.set(-.40);
-        endeffectormotor2.set(.40);
-        endeffectormotor3.set(-.40);//may need to spin backward
-        endeffectormotor4.set(.40);
+        feederFL.set(-1);
+        feederFR.set(1);
+        IntakeMotor.set(1);
+        endeffectormotorTFR.set(-.60);
+        endeffectormotor2MFR.set(-.60);// MAY NEED TO BE SLOWER THAN .7
+        endeffectormotor3TFL.set(.60);//may need to spin backward
+        endeffectormotor4MFL.set(.60);
         //may need to spin backward
     }
     }
 
     else{
-        endeffectormotor.set(0);
-        endeffectormotor2.set(0);
-        endeffectormotor3.set(0);
-        endeffectormotor4.set(0);
+        endeffectormotorTFR.set(0);
+        endeffectormotor2MFR.set(0);
+        endeffectormotor3TFL.set(0);
+        endeffectormotor4MFL.set(0);
         //may need to spin backward
         IntakeMotor.stopMotor(); 
-        feeder.stopMotor();
+        feederFL.stopMotor();
+        feederFR.stopMotor();
     }
 
     }
