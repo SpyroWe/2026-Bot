@@ -90,7 +90,7 @@ feederFR.getConfigurator().apply(shootconfig);
             feederFL.set(-0.7);
             feederFR.set(.7);
             IntakeMotor.set(1);
-        }, this).withTimeout(4)
+        }, this).withTimeout(2.5)
     );
 }
 
